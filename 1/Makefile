@@ -6,17 +6,16 @@
 # Please setup MNR, LANGUAGE, and optionally PERL and PYTHON
 #
 
-#TODO: insert your student-id here:
-MNR=XXXXXXX
+MNR=1127842
 
-#TODO: Select your programming language (perl/python)
-LANGUAGE = python
+LANGUAGE=python
 
 #interpreter for perl (please ensure that you use version 5.24.1)
 PERL = perl
 
 #interpreter for python (please ensure that you use version 3.6.0)
-PYTHON = python
+#TODO: Change this back to "python"
+PYTHON = python3
 
 #picosat solver (please ensure that you use version 965)
 PICOSAT = picosat
