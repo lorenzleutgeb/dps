@@ -14,8 +14,7 @@ LANGUAGE=python
 PERL = perl
 
 #interpreter for python (please ensure that you use version 3.6.0)
-#TODO: Change this back to "python"
-PYTHON = python3
+PYTHON = python
 
 #picosat solver (please ensure that you use version 965)
 PICOSAT = picosat
