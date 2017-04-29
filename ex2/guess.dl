@@ -1,14 +1,25 @@
 % g1
 % for each course requiring L > 0 lessons in the curriculum of the grade of a class,
 % exactly one teacher is assigned to teach that course in that class;
-assigned(T,C,S) v -assigned(T,C,S) :- curriculum(G,S,L), L > 0, class(C,G).
+assigned(T,C,S) v -assigned(T,C,S) :- curriculum(G,S,L), L > 0, class(C,G), teacher(T).
 
-:- not assigned(T,C,S), class(C,_),  course(S).
+:- assigned(T1,C,S), assigned(T2,C,S), T1<>T2.
 
 % g2
 % each class has exactly one form teacher, who is also teaching that class in some
 % course;
+formteacherOf(T,C) v -formteacherOf(T,C) :- class(C,_), teacher(T).
+
+:- formteacherOf(T1,C), formteacherOf(T2,C), T1<>T2.
+
+:- doesNotTeach(T,C).
+
+-doesNotTeach(T,C) :- assigned(T,C,S), class(C,_), course(S).
+doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
 
 % g3
 % for each extra-curricular activity requiring L > 0 hours of preparation per week,
 % exactly one teacher is assigned.
+responsibleFor(T,A) v -responsibleFor(T,A) :- activity(A,L), L > 0, teacher(T).
+
+:- responsibleFor(T1,A), responsibleFor(T2,A), T1<>T2.
