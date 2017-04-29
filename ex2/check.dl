@@ -1,0 +1,150 @@
+#maxint = 100.
+
+% i1
+% Only courses from the given set (course/1) are used to classify assignments,
+% curricula, and teachers' qualifications to teach courses.
+:- assigned(T,C,S), not course(S).
+:- curriculum(G,S,L), not course(S).
+:- qualified(T,S), not course(S).
+
+% i2
+% Classes can only be in grade 1 to 4 and not in more than one grade.
+:- class(C,G), G < 1.
+:- class(C,G), G > 4.
+:- class(C,G1), class(C,G2), G1<>G2.
+
+% i3
+% If for some grade and some course no curriculum is given,
+% 0 lessons are assumed to be required.
+curriculum(G,S,0) :- noCurriculumGiven(G,S).
+
+-noCurriculumGiven(G,S) :- curriculum(G,S,L), L > 0.
+noCurriculumGiven(G,S) :- not -noCurriculumGiven(G,S), course(S), class(_,G).
+
+% a1
+% If a class does not require any lessons in some course, no teacher should be
+% assigned to teach the course in that class.
+:- assigned(T,C,S), teacher(T), notRequired(C,S).
+
+notRequired(C,S) :- class(C,G), L = 0, curriculum(G,S,L).
+
+% a2
+% Only teachers who are qualified for a course may teach it.
+:- unqualified(T,C,S).
+
+unqualified(T,C,S) :- not qualified(T,S), assigned(T,C,S). 
+
+% a3
+% Each class should be taught each course by at most one teacher.
+:- assigned(T1,C,S), assigned(T2,C,S), T1 <> T2.
+
+% a4
+% No teacher has to be without any teaching assignment.
+:- withoutAssignment(T).
+
+-withoutAssignment(T) :- assigned(T,_,_).
+withoutAssignment(T) :- not -withoutAssignment(T), teacher(T).
+
+% a5
+% No teacher should teach more than 4 different classes.
+:- teachesMoreThanFour(T).
+
+-teachesMoreThanFour(T) :- not teachesMoreThanFour(T), teacher(T).
+teachesMoreThanFour(T) :-
+	assigned(T,C1,_),
+	assigned(T,C2,_),
+	assigned(T,C3,_),
+	assigned(T,C4,_),
+	assigned(T,C5,_),
+	C1 <> C2, C1 <> C3, C1 <> C4, C1 <> C5,
+	C2 <> C3, C2 <> C4, C2 <> C5,
+	C3 <> C4, C3 <> C5,
+	C4 <> C5.
+
+% a6
+% A teacher may not teach a class he or she has a relative in, except when there is a
+% relative in every class, to which he or she could teach at least one course. In that
+% case, he or she may teach a single class with a relative in it (and any number of
+% courses in that class).
+
+% a7
+% No teacher should be required to spend more than 24 hours preparing lessons
+% and extra-curricular activities in total every week, where each lesson for grades 1
+% and 2 accounts for 1 hour of preparation time and each lesson for grades 3 and 4
+% accounts for 2 hours of preparation time.
+:- teacher(T), totalPrepTime(T,L), L > 24.
+
+% succCS establishes an ordering over all assignments per teacher.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), assigned(T,C3,S3), C1 < C3, C3 < C2.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), assigned(T,C3,S3), C1 = C2, C2 = C3, S1 < S3, S3 < S2.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 = C2, S1 = S2.
+-succCS(T,C1,S1,C2,S2) :- succCS(T,C2,S2,C1,S1).
+succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), not -succCS(T,C1,S1,C2,S2).
+
+% firstCS picks the first assignment according to succCS.
+-firstCS(T,C,S) :- assigned(T,C,S), succCS(T,_,_,C,S).
+firstCS(T,C,S) :- assigned(T,C,S), not -firstCS(T,C,S).
+
+% lastCS picks the last assignment according to succCS.
+-lastCS(T,C,S) :- assigned(T,C,S), succCS(T,C,S,_,_).
+lastCS(T,C,S) :- assigned(T,C,S), not -lastCS(T,C,S).
+
+% prepTime scales preparation time according to grade.
+prepTime(T,C,S,L) :- assigned(T,C,S), class(C,G), curriculum(G,S,L), G < 3.
+prepTime(T,C,S,L2) :- assigned(T,C,S), class(C,G), curriculum(G,S,L1), *(L1,2,L2), #int(L2), G > 2.
+
+% coursePrepTimeSum sums up preparation time per teacher leveraging
+% the order imposed by succCS.
+coursePrepTimeSumUpTo(T,C,S,L) :- firstCS(T,C,S), prepTime(T,C,S,L), #int(L).
+coursePrepTimeSumUpTo(T,C2,S2,L2) :- coursePrepTimeSumUpTo(T,C1,S1,L1), succCS(T,C1,S1,C2,S2), prepTime(T,C,S,L), +(L1,L,L2), #int(L2).
+coursePrepTimeSum(T,L) :- lastCS(T,C,S), coursePrepTimeSumUpTo(T,C,S,L).
+coursePrepTimeSum(T,0) :- not first(T,C,S), teacher(T), course(S), class(C,_).
+
+-succA(T,A1,A2) :- responsibleFor(T,A1), responsibleFor(T,A2), responsibleFor(T,A3), A1 < A3, A3 < A2.
+succA(T,A1,A2) :- responsibleFor(T,A1), responsibleFor(T,A2), not -succA(T,A1,A2).
+
+-firstA(T,A) :- responsibleFor(T,A), succA(T,_,A).
+firstA(T,A) :- responsibleFor(T,A), not -firstA(T,A).
+
+-lastA(T,A) :- responsibleFor(T,A), succA(T,A,_).
+lastA(T,A) :- responsibleFor(T,A), not -lastA(T,A).
+
+extraPrepTimeSumUpTo(T,A,L) :- firstA(T,A), activity(A,L).
+extraPrepTimeSumUpTo(T,A2,L3) :- extraPrepTimeSumUpTo(T,A1,L1), succA(T,A1,A2), activity(A2,L2), +(L1,L2,L3), #int(L3). 
+extraPrepTimeSum(T,L) :- lastA(T,A), extraPrepTimeFineUpTo(T,A,L).
+extraPrepTimeSum(T,0) :- not firstA(T,A), teacher(T), activity(A,_).
+
+totalPrepTime(T,L3) :- coursePrepTimeSum(T,L1), extraPrepTimeSum(T,L2), +(L1,L2,L3), #int(L3).
+
+% f1
+% A class must not have more than one form teacher.
+:- missingFormteacher(C).
+-missingFormteacher(C) :- formteacherOf(T,C).
+missingFormteacher(C) :- not -missingFormteacher(C), class(C,_).
+
+:- formteacherOf(T1,C), formteacherOf(T2,C), T1 <> T2.
+
+% f2
+% A class must be taught by its form teacher.
+:- doesNotTeach(T,C).
+
+-doesNotTeach(T,C) :- assigned(T,C,S), class(C,_), course(S).
+doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C). 
+
+% f3
+% A teacher must not be form teacher at more than one class.
+:- formteacherOf(T,C1), formteacherOf(T,C2), C1 <> C2.
+
+% e1
+% An extra-curricular activity (activity/2) is led by exactly one teacher.
+:- responsibleFor(T1,A), responsibleFor(T2,A), T1<>T2.
+
+-noOneResponsibleFor(A) :- responsibleFor(_,A).
+noOneResponsibleFor(A) :- not -noOneResponsibleFor(A), activity(A,_). 
+
+:- noOneResponsibleFor(A).
+
+% e2
+% No teacher should spend more time preparing extra-curricular activities than
+% regular lessons.
+:- coursePrepTimeSum(T,L1), extraPrepTimeSum(T,L2), L1 < L2.

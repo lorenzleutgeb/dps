@@ -1,0 +1,7 @@
+course("Mathematik").
+course("Englisch").
+course("Sachunterricht").
+course("Deutsch").
+course("Turnen").
+course("Physik").
+course("Werken").

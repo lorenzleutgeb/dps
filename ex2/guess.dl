@@ -1,0 +1,14 @@
+% g1
+% for each course requiring L > 0 lessons in the curriculum of the grade of a class,
+% exactly one teacher is assigned to teach that course in that class;
+assigned(T,C,S) v -assigned(T,C,S) :- curriculum(G,S,L), L > 0, class(C,G).
+
+:- not assigned(T,C,S), class(C,_),  course(S).
+
+% g2
+% each class has exactly one form teacher, who is also teaching that class in some
+% course;
+
+% g3
+% for each extra-curricular activity requiring L > 0 hours of preparation per week,
+% exactly one teacher is assigned.

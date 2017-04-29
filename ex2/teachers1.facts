@@ -1,0 +1,17 @@
+teacher("Angelika Aha").
+teacher("Bastian Bar").
+teacher("Christian Chi").
+teacher("Daniel Dab").
+teacher("Emil Emo").
+teacher("Franz Foo").
+
+hasRelativeIn("Franz Foo", "1A").
+
+qualified("Bastian Bar", "Mathematik").
+qualified("Angelika Aha", "Deutsch").
+qualified("Daniel Dab", "Turnen").
+qualified("Daniel Dab", "Mathematik").
+qualified("Christian Chi", "Werken").
+qualified("Emil Emo", "Sachunterricht").
+qualified("Franz Foo", "Mathematik").
+qualified("Franz Foo", "Physik").
