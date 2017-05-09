@@ -1,5 +1,3 @@
-#maxint = 100.
-
 % i1
 % Only courses from the given set (course/1) are used to classify assignments,
 % curricula, and teachers' qualifications to teach courses.
@@ -66,6 +64,16 @@ teachesMoreThanFour(T) :-
 % relative in every class, to which he or she could teach at least one course. In that
 % case, he or she may teach a single class with a relative in it (and any number of
 % courses in that class).
+:- teacher(T), teachesRelativeIn(T,C), not allowedToTeachRelative(T).
+
+:- teachesRelative(T,C1), teachesRelative(T,C2), C1<>C2.
+
+teachesRelativeIn(T,C) :- hasRelativeIn(T,C), assigned(T,C,S).
+
+canTeach(T,C) :- class(C,G), curriculum(G,S,L), qualified(T,S), L > 0.
+
+-allowedToTeachRelative(T) :- canTeach(T,C), not hasRelativeIn(T,C).
+allowedToTeachRelative(T) :- not -allowedToTeachRelative(T), teacher(T).
 
 % a7
 % No teacher should be required to spend more than 24 hours preparing lessons
@@ -118,10 +126,6 @@ totalPrepTime(T,L3) :- coursePrepTimeSum(T,L1), extraPrepTimeSum(T,L2), +(L1,L2,
 
 % f1
 % A class must not have more than one form teacher.
-:- missingFormteacher(C).
--missingFormteacher(C) :- formteacherOf(T,C).
-missingFormteacher(C) :- not -missingFormteacher(C), class(C,_).
-
 :- formteacherOf(T1,C), formteacherOf(T2,C), T1 <> T2.
 
 % f2

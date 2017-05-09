@@ -8,11 +8,14 @@ assigned(T,C,S) v -assigned(T,C,S) :- curriculum(G,S,L), L > 0, class(C,G), teac
 % g2
 % each class has exactly one form teacher, who is also teaching that class in some
 % course;
-formteacherOf(T,C) v -formteacherOf(T,C) :- class(C,_), teacher(T).
-
+:- missingFormteacher(C).
 :- formteacherOf(T1,C), formteacherOf(T2,C), T1<>T2.
-
 :- doesNotTeach(T,C).
+
+-missingFormteacher(C) :- formteacherOf(T,C).
+missingFormteacher(C) :- not -missingFormteacher(C), class(C,_).
+
+formteacherOf(T,C) v -formteacherOf(T,C) :- class(C,_), teacher(T).
 
 -doesNotTeach(T,C) :- assigned(T,C,S), class(C,_), course(S).
 doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
