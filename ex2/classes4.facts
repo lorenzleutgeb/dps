@@ -1,0 +1,4 @@
+class("VALID", 1).
+
+curriculum(1,"VALID",1).
+curriculum(1,"INVALID",1).

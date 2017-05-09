@@ -1,0 +1,4 @@
+course("Course 1").
+course("Course 2").
+course("Course 3").
+

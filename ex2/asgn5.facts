@@ -1,0 +1,4 @@
+assigned("VALID", "VALID", "VALID").
+assigned("VALID", "VALID", "INVALID").
+
+formteacherOf("VALID","VALID").

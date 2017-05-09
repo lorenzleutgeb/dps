@@ -1,0 +1,4 @@
+class("Class 1", 1).
+class("Class 2", 2).
+
+curriculum(2,"Course",1).

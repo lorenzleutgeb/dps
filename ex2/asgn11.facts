@@ -1,0 +1,5 @@
+assigned("Teacher 1","Class 1","Course").
+assigned("Teacher 2","Class 2","Course").
+
+% Teacher 1 is already to teach Course!
+assigned("Teacher 2","Class 1","Course").

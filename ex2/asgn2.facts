@@ -1,0 +1,15 @@
+assigned("Angelika Aha", "2A", "Deutsch").
+assigned("Bastian Bar", "3A", "Mathematik").
+assigned("Bastian Bar", "4A", "Mathematik").
+assigned("Daniel Dab", "1A", "Mathematik").
+assigned("Daniel Dab", "2A", "Mathematik").
+assigned("Christian Chi", "2A", "Werken").
+assigned("Emil Emo", "4A", "Sachunterricht").
+assigned("Franz Foo", "4A", "Physik").
+
+responsibleFor("Angelika Aha", "Debattieren").
+
+formteacherOf("Daniel Dab", "1A").
+formteacherOf("Christian Chi", "2A").
+formteacherOf("Bastian Bar", "3A").
+formteacherOf("Franz Foo", "4A").

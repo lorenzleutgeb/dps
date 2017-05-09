@@ -1,0 +1,20 @@
+assigned("Teacher","Class 1","Course 1").
+assigned("Teacher","Class 1","Course 2").
+assigned("Teacher","Class 1","Course 3").
+
+assigned("Teacher","Class 2","Course 1").
+assigned("Teacher","Class 2","Course 2").
+assigned("Teacher","Class 2","Course 3").
+
+assigned("Teacher","Class 3","Course 1").
+assigned("Teacher","Class 3","Course 2").
+assigned("Teacher","Class 3","Course 3").
+
+assigned("Teacher","Class 4","Course 1").
+assigned("Teacher","Class 4","Course 2").
+assigned("Teacher","Class 4","Course 3").
+
+% Teacher must not teach more than 5 classes.
+assigned("Teacher","Class 5","Course 1").
+assigned("Teacher","Class 5","Course 2").
+assigned("Teacher","Class 5","Course 3").

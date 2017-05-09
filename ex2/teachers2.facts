@@ -6,6 +6,9 @@ teacher("Emil Emo").
 teacher("Franz Foo").
 
 hasRelativeIn("Franz Foo", "1A").
+hasRelativeIn("Franz Foo", "2A").
+hasRelativeIn("Franz Foo", "3A").
+hasRelativeIn("Franz Foo", "4A").
 
 qualified("Bastian Bar", "Mathematik").
 qualified("Angelika Aha", "Deutsch").

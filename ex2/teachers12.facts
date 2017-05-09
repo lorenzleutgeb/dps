@@ -1,0 +1,5 @@
+teacher("Teacher").
+
+qualified("Teacher","Course 1").
+qualified("Teacher","Course 2").
+qualified("Teacher","Course 3").

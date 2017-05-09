@@ -1,0 +1,4 @@
+teacher("VALID").
+
+qualified("VALID","VALID").
+qualified("VALID","INVALID").

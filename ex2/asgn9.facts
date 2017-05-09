@@ -1,0 +1,5 @@
+assigned("Teacher","Class 2","Course").
+
+% Here, Teacher is assigned to teach Class 1 when
+% there are 0 hours in the curriculum.
+assigned("Teacher","Class 1","Course").

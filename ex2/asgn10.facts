@@ -1,0 +1,4 @@
+assigned("Teacher","Class","Course 1").
+
+% Teacher is not qualified to teach Course 2!
+assigned("Teacher","Class","Course 2").

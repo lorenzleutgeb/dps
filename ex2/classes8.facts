@@ -1,0 +1,6 @@
+class("VALID", 1).
+
+curriculum(1, "C1", 1).
+
+:- not curriculum(1,"C1",1).
+:- not curriculum(1,"C2",0).

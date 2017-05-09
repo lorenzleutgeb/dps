@@ -1,0 +1,15 @@
+class("1A", 1).
+class("2A", 2).
+class("3A", 3).
+class("4A", 4).
+
+curriculum(1, "Mathematik", 1).
+curriculum(2, "Mathematik", 1).
+curriculum(2, "Deutsch", 1).
+curriculum(2, "Werken", 1).
+curriculum(3, "Mathematik", 1).
+curriculum(4, "Mathematik", 1).
+curriculum(3, "Englisch", 1).
+curriculum(4, "Englisch", 1).
+curriculum(4, "Sachunterricht", 1).
+curriculum(4, "Physik", 1).
