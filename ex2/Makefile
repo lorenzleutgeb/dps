@@ -22,7 +22,9 @@ CHECK_DLV := check.dl
 FACTS := \
 	teachers1.facts teachers2.facts teachers3.facts teachers4.facts teachers5.facts \
 	classes1.facts classes2.facts classes3.facts classes4.facts classes5.facts \
-	courses1.facts courses2.facts courses3.facts courses4.facts courses5.facts
+	courses1.facts courses2.facts courses3.facts courses4.facts courses5.facts \
+	activities1.facts, activities2.facts, activities3.facts, activities4.facts \
+	activities5.facts
 
 ASGN := asgn1.facts asgn2.facts asgn3.facts asgn4.facts asgn5.facts
 
