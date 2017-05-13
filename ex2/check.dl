@@ -66,7 +66,7 @@ teachesMoreThanFour(T) :-
 % courses in that class).
 :- teacher(T), teachesRelativeIn(T,C), not allowedToTeachRelative(T).
 
-:- teachesRelative(T,C1), teachesRelative(T,C2), C1<>C2.
+:- teachesRelativeIn(T,C1), teachesRelativeIn(T,C2), C1<>C2.
 
 teachesRelativeIn(T,C) :- hasRelativeIn(T,C), assigned(T,C,S).
 
@@ -141,7 +141,7 @@ doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
 
 % e1
 % An extra-curricular activity (activity/2) is led by exactly one teacher.
-:- responsibleFor(T1,A), responsibleFor(T2,A), T1<>T2.
+:- responsibleFor(T1,A), responsibleFor(T2,A), T1 <> T2.
 
 -noOneResponsibleFor(A) :- responsibleFor(_,A).
 noOneResponsibleFor(A) :- not -noOneResponsibleFor(A), activity(A,_). 
