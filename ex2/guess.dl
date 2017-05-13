@@ -26,3 +26,8 @@ doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
 responsibleFor(T,A) v -responsibleFor(T,A) :- activity(A,L), L > 0, teacher(T).
 
 :- responsibleFor(T1,A), responsibleFor(T2,A), T1<>T2.
+
+-noOneResponsibleFor(A) :- responsibleFor(_,A).
+noOneResponsibleFor(A) :- not -noOneResponsibleFor(A), activity(A,_).
+
+:- noOneResponsibleFor(A).
