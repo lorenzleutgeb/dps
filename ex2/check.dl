@@ -82,11 +82,23 @@ allowedToTeachRelative(T) :- not -allowedToTeachRelative(T), teacher(T).
 % accounts for 2 hours of preparation time.
 :- teacher(T), totalPrepTime(T,L), L > 24.
 
+-succS(T,C,S1,S2) :- assigned(T,C,S1), assigned(T,C,S2), assigned(T,C,S3), S1 < S3, S3 < S2.
+succS(T,C,S1,S2) :- assigned(T,C,S1), assigned(T,C,S2), not -succS(T,C,S1,S2), S1 < S2.
+
+-firstS(T,C,S) :- succS(T,C,_,S).
+firstS(T,C,S) :- assigned(T,C,S), not -firstS(T,C,S).
+
+-lastS(T,C,S) :- succS(T,C,S,_).
+lastS(T,C,S) :- assigned(T,C,S), not -lastS(T,C,S).
+
 % succCS establishes an ordering over all assignments per teacher.
 -succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), assigned(T,C3,S3), C1 < C3, C3 < C2.
--succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), assigned(T,C3,S3), C1 = C2, C2 = C3, S1 < S3, S3 < S2.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), assigned(T,C3,S3), C1 = C3, C3 = C2, S1 < S3, S3 < S2.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 > C2.
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 = C2, S1 > S2.
 -succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 = C2, S1 = S2.
--succCS(T,C1,S1,C2,S2) :- succCS(T,C2,S2,C1,S1).
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 < C2, not lastS(T,C1,S1).
+-succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), C1 < C2, not firstS(T,C2,S2).
 succCS(T,C1,S1,C2,S2) :- assigned(T,C1,S1), assigned(T,C2,S2), not -succCS(T,C1,S1,C2,S2).
 
 % firstCS picks the first assignment according to succCS.
@@ -103,13 +115,13 @@ prepTime(T,C,S,L2) :- assigned(T,C,S), class(C,G), curriculum(G,S,L1), *(L1,2,L2
 
 % coursePrepTimeSum sums up preparation time per teacher leveraging
 % the order imposed by succCS.
-coursePrepTimeSumUpTo(T,C,S,L) :- firstCS(T,C,S), prepTime(T,C,S,L), #int(L).
-coursePrepTimeSumUpTo(T,C2,S2,L2) :- coursePrepTimeSumUpTo(T,C1,S1,L1), succCS(T,C1,S1,C2,S2), prepTime(T,C,S,L), +(L1,L,L2), #int(L2).
+coursePrepTimeSumUpTo(T,C,S,L) :- firstCS(T,C,S), prepTime(T,C,S,L).
+coursePrepTimeSumUpTo(T,C2,S2,L2) :- coursePrepTimeSumUpTo(T,C1,S1,L1), succCS(T,C1,S1,C2,S2), prepTime(T,C2,S2,L), +(L1,L,L2), #int(L2).
 coursePrepTimeSum(T,L) :- lastCS(T,C,S), coursePrepTimeSumUpTo(T,C,S,L).
-coursePrepTimeSum(T,0) :- not first(T,C,S), teacher(T), course(S), class(C,_).
+coursePrepTimeSum(T,0) :- withoutAssignment(T).
 
 -succA(T,A1,A2) :- responsibleFor(T,A1), responsibleFor(T,A2), responsibleFor(T,A3), A1 < A3, A3 < A2.
-succA(T,A1,A2) :- responsibleFor(T,A1), responsibleFor(T,A2), not -succA(T,A1,A2).
+succA(T,A1,A2) :- responsibleFor(T,A1), responsibleFor(T,A2), not -succA(T,A1,A2), A1 < A2.
 
 -firstA(T,A) :- responsibleFor(T,A), succA(T,_,A).
 firstA(T,A) :- responsibleFor(T,A), not -firstA(T,A).
@@ -117,10 +129,13 @@ firstA(T,A) :- responsibleFor(T,A), not -firstA(T,A).
 -lastA(T,A) :- responsibleFor(T,A), succA(T,A,_).
 lastA(T,A) :- responsibleFor(T,A), not -lastA(T,A).
 
+-withoutActivity(T) :- responsibleFor(T,A), activity(A,_).
+withoutActivity(T) :- not -withoutActivity(T), teacher(T).
+
 extraPrepTimeSumUpTo(T,A,L) :- firstA(T,A), activity(A,L).
 extraPrepTimeSumUpTo(T,A2,L3) :- extraPrepTimeSumUpTo(T,A1,L1), succA(T,A1,A2), activity(A2,L2), +(L1,L2,L3), #int(L3). 
-extraPrepTimeSum(T,L) :- lastA(T,A), extraPrepTimeFineUpTo(T,A,L).
-extraPrepTimeSum(T,0) :- not firstA(T,A), teacher(T), activity(A,_).
+extraPrepTimeSum(T,L) :- lastA(T,A), extraPrepTimeSumUpTo(T,A,L).
+extraPrepTimeSum(T,0) :- withoutActivity(T).
 
 totalPrepTime(T,L3) :- coursePrepTimeSum(T,L1), extraPrepTimeSum(T,L2), +(L1,L2,L3), #int(L3).
 
