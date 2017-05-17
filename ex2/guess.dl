@@ -5,6 +5,11 @@ assigned(T,C,S) v -assigned(T,C,S) :- curriculum(G,S,L), L > 0, class(C,G), teac
 
 :- assigned(T1,C,S), assigned(T2,C,S), T1<>T2.
 
+-noOneAssigned(C,S) :- assigned(T,C,S).
+noOneAssigned(C,S) :- curriculum(G,S,L), L > 0, class(C,G), not -noOneAssigned(C,S).
+
+:- noOneAssigned(C,S).
+
 % g2
 % each class has exactly one form teacher, who is also teaching that class in some
 % course;
