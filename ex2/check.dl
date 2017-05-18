@@ -110,13 +110,13 @@ firstCS(T,C,S) :- assigned(T,C,S), not -firstCS(T,C,S).
 lastCS(T,C,S) :- assigned(T,C,S), not -lastCS(T,C,S).
 
 % prepTime scales preparation time according to grade.
-prepTime(T,C,S,L) :- assigned(T,C,S), class(C,G), curriculum(G,S,L), G < 3.
-prepTime(T,C,S,L2) :- assigned(T,C,S), class(C,G), curriculum(G,S,L1), *(L1,2,L2), #int(L2), G > 2.
+prepTime(C,S,L) :- class(C,G), curriculum(G,S,L), G < 3.
+prepTime(C,S,L2) :- class(C,G), curriculum(G,S,L1), *(L1,2,L2), #int(L2), G > 2.
 
 % coursePrepTimeSum sums up preparation time per teacher leveraging
 % the order imposed by succCS.
-coursePrepTimeSumUpTo(T,C,S,L) :- firstCS(T,C,S), prepTime(T,C,S,L).
-coursePrepTimeSumUpTo(T,C2,S2,L2) :- coursePrepTimeSumUpTo(T,C1,S1,L1), succCS(T,C1,S1,C2,S2), prepTime(T,C2,S2,L), +(L1,L,L2), #int(L2).
+coursePrepTimeSumUpTo(T,C,S,L) :- firstCS(T,C,S), prepTime(C,S,L).
+coursePrepTimeSumUpTo(T,C2,S2,L2) :- coursePrepTimeSumUpTo(T,C1,S1,L1), succCS(T,C1,S1,C2,S2), prepTime(C2,S2,L), +(L1,L,L2), #int(L2).
 coursePrepTimeSum(T,L) :- lastCS(T,C,S), coursePrepTimeSumUpTo(T,C,S,L).
 coursePrepTimeSum(T,0) :- withoutAssignment(T).
 
