@@ -6,6 +6,8 @@ activityPrepTime(T,X) :- teacher(T), #sum{ L,A : responsibleFor(T,A), activity(A
 
 totalPrepTime(T,Z) :- teachingPrepTime(T,X), activityPrepTime(T,Y), Z = X + Y.
 
+teachingTime(T,X) :- teacher(T), #sum{ L,C,S : assigned(T,C,S,L) } = X.
+
 % i1
 % Only courses from the given set (course/1) are used to classify assignments,
 % curricula, and teachers' qualifications to teach courses.
@@ -72,6 +74,9 @@ allowedToTeachRelative(T) :- not -allowedToTeachRelative(T), teacher(T).
 % grades 3 and 4 accounts for 2 hours of preparation time.
 :- teacher(T), totalPrepTime(T,L), L > 24.
 
+% a8 No teacher is assigned to teach more than 20 lessons a week.
+:- teacher(T), teachingTime(T,L), L > 20.
+
 % f1
 % A class must not have more than one form teacher.
 :- formteacherOf(T1,C), formteacherOf(T2,C), T1 != T2.
@@ -91,4 +96,14 @@ allowedToTeachRelative(T) :- not -allowedToTeachRelative(T), teacher(T).
 % e2
 % No teacher should spend more time preparing extra-curricular activities than
 % regular lessons.
-:- teachingPrepTime(T,L1), activityPrepTime(T,L2), L1 < L2.
+%:- teachingPrepTime(T,L1), activityPrepTime(T,L2), L1 < L2.
+
+% e3
+% No teacher is assigned to spend more than 10 hours a week for extra-curricular
+% activities.
+:- teacher(T), extraPrepTime(T,L), L > 10.
+
+% e4
+% Each teacher should spend at most as much time preparing extra-curricular
+% activities as teaching lessons.
+:- teacher(T), extraPrepTime(T,X), teachingTime(T,Y), X > Y.
