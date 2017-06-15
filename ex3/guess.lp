@@ -11,7 +11,7 @@ numTeachers(C,S,X) :- class(C,_), course(S), X = #count{ T : assigned(T,C,S,L), 
 % course;
 { formteacherOf(T,C) : teacher(T) } = 1 :- class(C,_).
 
--doesNotTeach(T,C) :- assigned(T,C,S), class(C,_), course(S).
+-doesNotTeach(T,C) :- assigned(T,C,S,_), class(C,_), course(S).
 doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
 
 :- doesNotTeach(T,C).
@@ -21,15 +21,17 @@ doesNotTeach(T,C) :- not -doesNotTeach(T,C), formteacherOf(T,C).
 % exactly one teacher is assigned.
 { responsibleFor(T,A) : teacher(T) } = 1 :- activity(A,L), L > 0.
 
-% g4 In each class requiring L <= 3 lessons a week in a course, no more than one
+% g4
+% In each class requiring L <= 3 lessons a week in a course, no more than one
 % teacher is assigned to that course.
-:- class(C,G), curriculum(G,S,L), L <= 3, numTeachers(C,S,X), X > 1.
+%:- class(C,G), curriculum(G,S,L), L <= 3, numTeachers(C,S,X), X > 1.
 
 % g5
 % Whenever multiple teachers are assigned to a single course of a class, each of
 % those teachers must be assigned for L >= 2 lessons a week to that course in
 % the class
-:- class(C,G), curriculum(G,S,L), numTeachers(C,S,X), X > 1, assigned(T,C,S,L), L = 1.
+multipleTeachers(C,S) :- teacher(T1), teacher(T2), assigned(T1,C,S,L1), assigned(T2,C,S,L2), T1 != T2.
+:- teacher(T), multipleTeachers(C,S), assigned(T,C,S,L), L < 2.
 
 % g6
 % To each course required in a class, a teacher can only be assigned once (i.e.,
